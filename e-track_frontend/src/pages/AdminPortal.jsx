@@ -7,6 +7,10 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
+
+const RAW_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_BASE_URL = RAW_API_URL.endsWith('/') ? RAW_API_URL.slice(0, -1) : RAW_API_URL;
+
 // --- Mock Data for Authorized Recycling Centers ---
 const authorizedRecyclingCenters = [
     { name: 'Green-Tech Recyclers, Nagpur', lat: 21.1458, lon: 79.0882, contact: { phone: '+919876543210', email: 'contact@gt-recyclers.com' } },
@@ -49,7 +53,7 @@ const AdminPortal = () => {
         setIsLoading(true);
         setError('');
         try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reports`);
+        const response = await fetch(`${API_BASE_URL}/api/reports`);
             if (!response.ok) {
                 throw new Error('Failed to fetch reports.');
             }
@@ -115,7 +119,7 @@ const AdminPortal = () => {
         if (!window.confirm('Are you sure you want to delete this report?')) return;
 
         try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reports/${reportId}`, {
+        const response = await fetch(`${API_BASE_URL}/api/reports/${reportId}`, {
                 method: 'DELETE',
             });
             if (!response.ok) {
@@ -135,7 +139,7 @@ const AdminPortal = () => {
 
     const handleUpdateStatus = async (reportId, newStatus) => {
         try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reports/${reportId}`, {
+        const response = await fetch(`${API_BASE_URL}/api/reports/${reportId}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: newStatus }),
