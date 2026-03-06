@@ -32,12 +32,31 @@ mongoose
   .then(() => console.log("MongoDB connected successfully."))
   .catch((err) => console.error("MongoDB connection error:", err));
 
-// ---------------- Default Route -------------------------
-app.get("/", (req, res) => {
-  res.send("E-Waste Tracking API is running ✔");
+// ---------------- Upload Image via Cloudinary ------------------
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+app.post('/api/upload', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file)
+      return res.status(400).json({ message: "No image file provided." });
+
+    const b64 = req.file.buffer.toString("base64");
+    const dataURI = `data:${req.file.mimetype};base64,${b64}`;
+
+    const result = await cloudinary.uploader.upload(dataURI, {
+      folder: "ewaste-reports",
+    });
+
+    res.status(200).json({ imageUrl: result.secure_url });
+
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    res.status(500).json({ message: 'Server error while uploading image.' });
+  }
 });
 
-// ---------------- Create Report -------------------------
+// ---------------- Default Route -------------------------
 app.post('/api/reports', async (req, res) => {
   try {
     const { latitude, longitude, description, imageUrl, severity } = req.body;
@@ -118,28 +137,9 @@ app.patch('/api/reports/:id', async (req, res) => {
   }
 });
 
-// ---------------- Upload Image via Cloudinary ------------------
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
-
-app.post('/api/upload', upload.single('image'), async (req, res) => {
-  try {
-    if (!req.file)
-      return res.status(400).json({ message: "No image file provided." });
-
-    const b64 = req.file.buffer.toString("base64");
-    const dataURI = `data:${req.file.mimetype};base64,${b64}`;
-
-    const result = await cloudinary.uploader.upload(dataURI, {
-      folder: "ewaste-reports",
-    });
-
-    res.status(200).json({ imageUrl: result.secure_url });
-
-  } catch (error) {
-    console.error("Error uploading image:", error);
-    res.status(500).json({ message: 'Server error while uploading image.' });
-  }
+// ---------------- Default Route (moved to end) -------------------------
+app.get("/", (req, res) => {
+  res.send("E-Waste Tracking API is running ✔");
 });
 
 // ---------------- Start Server --------------------------
