@@ -203,7 +203,7 @@ const Footer = () => (
         <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6">
           <a href="#" className="text-gray-400 hover:text-white">About</a>
           <a href="#" className="text-gray-400 hover:text-white">Privacy Policy</a>
-          <a href="mailto:contact@ewastetrack.org" className="text-gray-400 hover:text-white">Contact</a>
+          <a href="mailto:roshanjhajha76@gmail.com" className="text-gray-400 hover:text-white">Contact</a>
         </div>
       </div>
       <div className="mt-8 border-t border-gray-700 pt-6 text-center text-gray-500">
